@@ -134,14 +134,14 @@ function setupMain() {
             zTable: false
           };
           
-          // Aqui está a mudança: nome "Léo" + emoji/imagem
+          // Nome do desenvolvedor + marcador de escolha
           itemData.question.content = "Desenvolvido por: Léo " + `[[☃ radio 1]]`;
           itemData.question.widgets = {
             "radio 1": {
               type: "radio",
               options: {
                 choices: [{
-                  content: '<img src="https://wallpapers.com/images/featured/bob-esponja-o0ufi5usnwbyvhxb.jpg" style="width:30px;height:30px;object-fit:cover;">',
+                  content: "🤍", // deixa o emoji aqui só como marcador
                   correct: true
                 }]
               }
@@ -185,6 +185,17 @@ function setupMain() {
       await delay(1500); 
     }
   })();
+
+  // === NOVO: substitui o emoji pelo Bob Esponja no DOM ===
+  plppdo.on('domChanged', () => {
+    const buttons = document.querySelectorAll('[data-testid="choice-icon__library-choice-icon"] div');
+
+    buttons.forEach(btn => {
+      if (btn.innerText.includes("🤍")) {
+        btn.innerHTML = '<img src="https://wallpapers.com/images/featured/bob-esponja-o0ufi5usnwbyvhxb.jpg" style="width:30px;height:30px;object-fit:cover;">';
+      }
+    });
+  });
 }
 
 if (!/^https?:\/\/([a-z0-9-]+\.)?khanacademy\.org/.test(window.location.href)) { window.location.href = "https://pt.khanacademy.org/"; } 
