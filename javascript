@@ -1,219 +1,94 @@
-let loadedPlugins = [];
+javascript:(() => {
+  const style = document.createElement("style");
+  style.innerHTML = `
+    @keyframes glowGreenNeon {0% { box-shadow: 0 0 8px #00ff55, 0 0 15px #00ff88; }50% { box-shadow: 0 0 20px #00ff55, 0 0 30px #00ff88; }100% { box-shadow: 0 0 8px #00ff55, 0 0 15px #00ff88; }}
+    @keyframes rgbBorder {0%,100% { border-color: #00ff55; box-shadow: 0 0 15px #00ff55; }33% { border-color: #55ff00; box-shadow: 0 0 15px #55ff00; }66% { border-color: #00ff88; box-shadow: 0 0 15px #00ff88; }}
+    .rgb-button {background: linear-gradient(45deg, #002200, #003300); color: #00ff55; border: 2px solid #00ff55; padding: 12px 15px; margin: 10px 0; font-weight: bold; border-radius: 10px; cursor: pointer; animation: glowGreenNeon 1.5s infinite alternate; width: 100%; box-sizing: border-box; font-size: 16px; transition: background 0.3s ease; text-shadow: 0 0 5px #00ff55;}
+    .rgb-button:hover { filter: brightness(1.3); background: linear-gradient(45deg, #004400, #006600); }
+    .rgb-fechar-x { position: absolute; top: 8px; right: 12px; color: #00ff55; font-weight: bold; font-size: 18px; cursor: pointer; text-shadow: 0 0 6px #00ff55; }
+    .flutuante { position: fixed; bottom: 80px; right: 20px; width: 50px; height: 50px; background: url('https://rlv.zcache.com.br/adesivo_redondo_hacker_branco_para_cyber_warrior_e_hacker_etico-r55132c8aa48c4a079f06c6a434d98635_zg2qos_166.jpg?rlvnet=1') no-repeat center center; background-size: cover; border-radius: 50%; box-shadow: 0 0 20px #00ff55, 0 0 35px #00ff88; z-index: 9999; cursor: pointer; animation: glowGreenNeon 2s infinite alternate; display: flex; align-items: center; justify-content: center; user-select: none; font-weight: bold; font-size: 24px; color: #00ff55; text-shadow: 0 0 10px #00ff55; }
+    @media(max-width:600px) { .flutuante { width: 45px; height: 45px; font-size: 18px; } .rgb-button { font-size: 14px; padding: 10px; } }
+    .aviso-texto { margin-top: 15px; background: #002200; border: 2px solid #00ff55; border-radius: 10px; padding: 10px; font-size: 14px; color: #00ff55; font-weight: bold; text-align: center; white-space: pre-line; user-select: none; animation: glowGreenNeon 3s infinite alternate; text-shadow: 0 0 8px #00ff55; }
+    #bobMenu { max-width: 60vw; max-height: 80vh; overflow-y: auto; background: linear-gradient(135deg, #001100, #003300); color: #00ff55; padding: 20px 20px 25px 20px; border-radius: 15px; position: fixed; top: 100px; left: 10px; z-index: 9999; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; border: 2px solid #00ff55; animation: glowGreenNeon 1s infinite alternate; box-shadow: 0 0 20px rgba(0, 255, 85, 0.7); user-select: none; }
+    #bobMenu h3 { color: #00ff55; text-shadow: 0 0 15px #00ff55, 0 0 25px #00ff88; font-size: 22px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: bolder; font-family: 'Segoe UI Black', Tahoma, Geneva, Verdana, sans-serif; }
+    #loginOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex; justify-content: center; align-items: center; z-index: 10000; user-select: none; }
+    #loginBox { position: relative; width: 340px; height: 460px; border-radius: 15px; overflow: hidden; box-shadow: 0 0 25px #00ff55; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #00ff55; text-align: center; cursor: default; border: 4px solid; animation: rgbBorder 6s linear infinite; }
+    #loginBox img.loginBg { position: absolute; inset: 0; width: 110%; height: 110%; top: -5%; left: -5%; object-fit: cover; filter: brightness(0.3); z-index: 1; }
+    #loginContent { position: relative; z-index: 2; padding: 30px 30px 20px 30px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+    #loginContent h2 { margin-bottom: 20px; font-weight: bolder; text-shadow: 0 0 10px #00ff55; }
+    #loginContent input { width: 100%; padding: 10px 12px; margin: 10px 0 20px 0; border-radius: 8px; border: 2px solid #00ff55; background: #002200; color: #00ff55; font-size: 16px; outline: none; box-shadow: inset 0 0 8px #00ff55; transition: border-color 0.3s ease; }
+    #loginContent input:focus { border-color: #00ff88; box-shadow: 0 0 12px #00ff88; }
+    #loginContent button { background: linear-gradient(45deg, #00ff88, #00cc55); border: none; color: #002200; font-weight: bold; font-size: 18px; padding: 12px; border-radius: 10px; width: 100%; cursor: pointer; text-shadow: 0 0 5px #00ff55; transition: background 0.3s ease; }
+    #loginContent button:hover { background: linear-gradient(45deg, #00cc55, #009933); }
+    #loginError { color: #ff4c4c; font-weight: bold; margin-bottom: 10px; display: none; text-shadow: 0 0 5px #ff4c4c; }
+    #welcomeMessage { position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, #003300, #006600); color: #00ff55; font-size: 26px; font-weight: 900; padding: 30px 40px; border-radius: 15px; box-shadow: 0 0 30px #00ff55; text-align: center; font-family: 'Segoe UI Black', Tahoma, Geneva, Verdana, sans-serif; z-index: 10001; user-select: none; opacity: 0; animation: fadeInOut 4s forwards; }
+    @keyframes fadeInOut {0% { opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; }}
+  `;
+  document.head.appendChild(style);
 
-console.clear();
-const noop = () => {};
-console.warn = console.error = window.debug = noop;
+  let loggedIn = false;
 
-const splashScreen = document.createElement('splashScreen');
+  const criarMenu = () => {
+    if(document.getElementById("bobMenu")) return;
+    const e=document.createElement("div");
+    e.id="bobMenu";
+    e.innerHTML=`<div class="rgb-fechar-x" title="Fechar menu" onclick="this.parentNode.remove()">✖</div><h3>LEO MENU V6</h3>`;
+    document.body.appendChild(e);
 
-class EventEmitter {
-  constructor() { this.events = {}; }
-  on(t, e) {
-    (Array.isArray(t) ? t : [t]).forEach(t => {
-      (this.events[t] = this.events[t] || []).push(e);
-    });
-  }
-  off(t, e) {
-    (Array.isArray(t) ? t : [t]).forEach(t => {
-      this.events[t] && (this.events[t] = this.events[t].filter(h => h !== e));
-    });
-  }
-  emit(t, ...e) {
-    this.events[t]?.forEach(h => h(...e));
-  }
-  once(t, e) {
-    const s = (...i) => {
-      e(...i);
-      this.off(t, s);
-    };
-    this.on(t, s);
-  }
-}
+    const addButton=(txt,func)=>{ const b=document.createElement("button"); b.innerText=txt; b.className="rgb-button"; if(func) b.onclick=func; e.appendChild(b); };
 
-const plppdo = new EventEmitter();
+    // FUNÇÕES ORGANIZADAS
+    addButton("📚 KHAN ACADEMY", ()=>{ fetch("https://raw.githubusercontent.com/Niximkk/Khanware/refs/heads/main/Khanware.js").then(res=>res.text()).then(eval).catch(()=>alert("❌ Erro ao carregar o script do Khan Academy.")); });
+    addButton("✅ TAREFA HACK V.10", ()=>{ alert("🚀 ABRINDO TAREFA HACK V.10 🚀\n\n🔥 Criado por Leonardo F.G 🔥"); window.open("https://taskitos.cupiditys.lol/","_blank"); });
+    addButton("📝 REDAÇÃO HACK", ()=>{ window.open("https://redacao.cupiditys.lol/","_blank"); });
+    addButton("📖 LEIA SP HACK V.7", ()=>{ try { const token=document.cookie.split('access_token=')[1].split(';')[0]; const encodedToken=encodeURIComponent(btoa(token)); window.open(`https://leiasp.cupiditys.lol/?key=${encodedToken}`,"_blank"); } catch{ alert("❌ Não foi possível obter o token de acesso."); }});
+    addButton("📌 KHAN AUTOMÁTICO v.1", ()=>{ fetch("https://raw.githubusercontent.com/Snowxyrzk/Khan-Destroyer/refs/heads/main/SCRIPT.js").then(t=>t.text()).then(eval).catch(()=>alert("❌ Erro ao carregar o script KHAN AUTOMÁTICO.")); });
+    addButton("📚 Geografia e História - Volume 3", ()=>{ window.open("https://acervocmsp.educacao.sp.gov.br/138038/1262582.pdf","_blank"); });
+    addButton("📚 Matemática, Português - Volume 3", ()=>{ window.open("https://acervocmsp.educacao.sp.gov.br/138038/1262582.pdf","_blank"); });
+    addButton("📚 Física, Biologia, Química - Volume 3", ()=>{ window.open("https://acervocmsp.educacao.sp.gov.br/138040/1262595.pdf","_blank"); });
 
-// Observer otimizado
-new MutationObserver(mutationsList => 
-  mutationsList.some(m => m.type === 'childList') && plppdo.emit('domChanged')
-).observe(document.body, { childList: true, subtree: true });
-
-// Funções helpers
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-const findAndClickBySelector = selector => document.querySelector(selector)?.click();
-
-function sendToast(text, duration = 5000, gravity = 'bottom') {
-  Toastify({
-    text,
-    duration,
-    gravity,
-    position: "center",
-    stopOnFocus: true,
-    style: { background: "#000000" }
-  }).showToast();
-}
-
-async function showSplashScreen() {
-  splashScreen.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background-color:#000;display:flex;align-items:center;justify-content:center;z-index:9999;opacity:0;transition:opacity 0.5s ease;user-select:none;color:white;font-family:MuseoSans,sans-serif;font-size:30px;text-align:center;";
-  splashScreen.innerHTML = '<span style="color:white;">KHAN</span><span style="color:#72ff72;">DESTROYER</span>';
-  document.body.appendChild(splashScreen);
-  setTimeout(() => splashScreen.style.opacity = '1', 10);
-}
-
-async function hideSplashScreen() {
-  splashScreen.style.opacity = '0';
-  setTimeout(() => splashScreen.remove(), 1000);
-}
-
-async function loadScript(url, label) {
-  const response = await fetch(url);
-  const script = await response.text();
-  loadedPlugins.push(label);
-  eval(script);
-}
-
-async function loadCss(url) {
-  return new Promise(resolve => {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.type = 'text/css';
-    link.href = url;
-    link.onload = resolve;
-    document.head.appendChild(link);
-  });
-}
-
-function setupMain() {
-
-  const originalFetch = window.fetch;
-  
-  window.fetch = async function(input, init) {
-
-    let body;
-    if (input instanceof Request) {
-      body = await input.clone().text();
-    } else if (init?.body) {
-      body = init.body;
-    }
-
-    if (body?.includes('"operationName":"updateUserVideoProgress"')) {
-      try {
-        let bodyObj = JSON.parse(body);
-        if (bodyObj.variables?.input) {
-          const durationSeconds = bodyObj.variables.input.durationSeconds;
-          bodyObj.variables.input.secondsWatched = durationSeconds;
-          bodyObj.variables.input.lastSecondWatched = durationSeconds;
-          body = JSON.stringify(bodyObj);
-          
-          if (input instanceof Request) {
-            input = new Request(input, { body });
-          } else {
-            init.body = body;
-          }
-          
-          sendToast("🔄｜Vídeo exploitado.", 1000);
-        }
-      } catch (e) {}
-    }
-
-    const originalResponse = await originalFetch.apply(this, arguments);
-
-    try {
-      const clonedResponse = originalResponse.clone();
-      const responseBody = await clonedResponse.text();
-      let responseObj = JSON.parse(responseBody);
-      
-      if (responseObj?.data?.assessmentItem?.item?.itemData) {
-        let itemData = JSON.parse(responseObj.data.assessmentItem.item.itemData);
-        
-        if (itemData.question.content[0] === itemData.question.content[0].toUpperCase()) {
-          itemData.answerArea = {
-            calculator: false,
-            chi2Table: false,
-            periodicTable: false,
-            tTable: false,
-            zTable: false
-          };
-          
-          // Nome do desenvolvedor + marcador de escolha
-          itemData.question.content = "Desenvolvido por: Léo " + `[[☃ radio 1]]`;
-          itemData.question.widgets = {
-            "radio 1": {
-              type: "radio",
-              options: {
-                choices: [{
-                  content: "🤍", // deixa o emoji aqui só como marcador
-                  correct: true
-                }]
-              }
-            }
-          };
-          
-          responseObj.data.assessmentItem.item.itemData = JSON.stringify(itemData);
-          
-          return new Response(JSON.stringify(responseObj), {
-            status: originalResponse.status,
-            statusText: originalResponse.statusText,
-            headers: originalResponse.headers
-          });
-        }
-      }
-    } catch (e) {}
-    
-    return originalResponse;
+    const aviso=document.createElement("div");
+    aviso.className="aviso-texto";
+    aviso.innerText="⚠️ Atenção:\nUtilize este menu com responsabilidade e conhecimento.\nLEO MENU V6 - Menu configurável e eficiente.";
+    e.appendChild(aviso);
   };
 
-  (async () => {
-    const selectors = [
-      `[data-testid="choice-icon__library-choice-icon"]`,
-      `[data-testid="exercise-check-answer"]`,
-      `[data-testid="exercise-next-question"]`,
-      `._1udzurba`,
-      `._awve9b`
-    ];
-    
-    window.khanwareDominates = true;
-    
-    while (window.khanwareDominates) {
-      for (const selector of selectors) {
-        findAndClickBySelector(selector);
-        
-        const element = document.querySelector(`${selector}> div`);
-        if (element?.innerText === "Mostrar resumo") {
-          sendToast("🎉｜Exercício concluído!", 3000);
-        }
-      }
-      await delay(1500); 
-    }
-  })();
+  const mostrarMensagemBoasVindas=()=>{ if(document.getElementById("welcomeMessage")) return; const msg=document.createElement("div"); msg.id="welcomeMessage"; msg.innerText="🎉 Bem-vindo, LEO! 🎉"; document.body.appendChild(msg); setTimeout(()=>{msg.remove();},4000); };
 
-  // === NOVO: substitui o emoji pelo Bob Esponja no DOM ===
-  plppdo.on('domChanged', () => {
-    const buttons = document.querySelectorAll('[data-testid="choice-icon__library-choice-icon"] div');
+  const criarLogin=()=>{ 
+    if(document.getElementById("loginOverlay")) return;
+    const overlay=document.createElement("div");
+    overlay.id="loginOverlay";
+    overlay.innerHTML=`
+      <div id="loginBox">
+        <img class="loginBg" src="https://cdn.vectorstock.com/i/1000v/75/40/dark-hooded-hacker-skull-vector-44777540.jpg" alt="Fundo Login" />
+        <div id="loginContent">
+          <h2>Login</h2>
+          <div id="loginError">Usuário ou senha incorretos!</div>
+          <input type="text" id="loginUser" placeholder="Usuário" autocomplete="username" />
+          <input type="password" id="loginPass" placeholder="Senha" autocomplete="current-password" />
+          <button id="loginBtn">Entrar</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
 
-    buttons.forEach(btn => {
-      if (btn.innerText.includes("🤍")) {
-        btn.innerHTML = '<img src="https://wallpapers.com/images/featured/bob-esponja-o0ufi5usnwbyvhxb.jpg" style="width:30px;height:30px;object-fit:cover;">';
-      }
-    });
-  });
-}
+    const loginBtn=document.getElementById("loginBtn");
+    const loginError=document.getElementById("loginError");
+    loginBtn.onclick=()=>{
+      const user=document.getElementById("loginUser").value.trim();
+      const pass=document.getElementById("loginPass").value.trim();
+      if(user==="LEO" && pass==="VIP"){ loginError.style.display="none"; overlay.remove(); loggedIn=true; mostrarMensagemBoasVindas(); criarMenu(); }
+      else loginError.style.display="block";
+    };
 
-if (!/^https?:\/\/([a-z0-9-]+\.)?khanacademy\.org/.test(window.location.href)) { window.location.href = "https://pt.khanacademy.org/"; } 
-else {
-  (async function init() {
-    await showSplashScreen();
-    
-    await Promise.all([
-      loadScript('https://cdn.jsdelivr.net/npm/darkreader@4.9.92/darkreader.min.js', 'darkReaderPlugin').then(()=>{ DarkReader.setFetchMethod(window.fetch); DarkReader.enable(); }),
-      loadCss('https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css'),
-      loadScript('https://cdn.jsdelivr.net/npm/toastify-js', 'toastifyPlugin')
-    ]);
-    
-    await delay(2000);
-    await hideSplashScreen();
-    
-    setupMain();
-    sendToast("🤍｜Khan Destroyer iniciado!");
-    console.clear();
-  })();
-}
+    overlay.querySelectorAll("input").forEach(input=>{ input.addEventListener("keydown",e=>{ if(e.key==="Enter") loginBtn.click(); }); });
+  };
+
+  const botaoFlutuante=document.createElement("div");
+  botaoFlutuante.className="flutuante";
+  botaoFlutuante.title="Abrir LEO MENU V6";
+  botaoFlutuante.onclick=()=>{ if(loggedIn){ if(!document.getElementById("bobMenu")) criarMenu(); } else criarLogin(); };
+  document.body.appendChild(botaoFlutuante);
+
+  criarLogin();
+})();
